@@ -19,6 +19,8 @@ Por qué: Ideal para proyectos .NET en general, ya que mejora la compatibilidad 
 - [VBScript](https://marketplace.visualstudio.com/items?itemName=Darfka.vbscript): Para resaltado de sintaxis básico.
 - [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker): 
 Por qué: Ayuda a detectar errores ortográficos en comentarios y nombres de variables, lo que es útil especialmente en proyectos grandes.
+- [VB NET Grammar and Snippet](https://marketplace.visualstudio.com/items?itemName=author.vbnet-grammar-snippet): 
+Por qué: Proporciona gramática y fragmentos de código para VB.NET, mejorando la productividad y la precisión al escribir código.
 
 
 
