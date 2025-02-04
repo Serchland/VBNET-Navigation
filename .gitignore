@@ -1,0 +1,25 @@
+# Node.js
+node_modules/
+
+# VS Code settings
+.vscode/
+
+# Build output
+/out/
+dist/
+
+# Logs
+npm-debug.log
+yarn-error.log
+debug.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VS Code extension packaging
+*.vsix
+
+# Dependencies
+package-lock.json
+yarn.lock

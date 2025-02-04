@@ -1,0 +1,51 @@
+{
+  "name": "vbnet-navigator",
+  "displayName": "VB.NET Navigator",
+  "description": "Navegación básica para proyectos VB.NET en VS Code.",
+  "version": "0.0.1",
+  "publisher": "Serchland",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Serchland/VBNET-Navigation.git"
+  },
+  "activationEvents": [
+    "onLanguage:vbnet"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "vbnet-navigator.goToDefinition",
+        "title": "VB.NET: Ir a definición"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "vbnet-navigator.goToDefinition",
+        "key": "F12",
+        "when": "editorTextFocus && editorLangId == vbnet"
+      }
+    ],
+    "menus": {
+      "editor/context": [
+        {
+          "command": "vbnet-navigator.goToDefinition",
+          "group": "navigation",
+          "when": "editorTextFocus && editorLangId == vbnet"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "typescript": "^4.9.4"
+  }
+}
