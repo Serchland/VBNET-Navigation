@@ -1,4 +1,9 @@
-.vscode/**
-.vscode-test/**
+# Excluir pruebas
+test/*
+# Excluir archivos de configuración
+.vscode/*
+# Excluir documentación
+docs/*
 .gitignore
 vsc-extension-quickstart.md
+

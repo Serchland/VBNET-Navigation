@@ -3,7 +3,7 @@
   "displayName": "VB.NET Navigator",
   "description": "Navegación básica para proyectos VB.NET en VS Code.",
   "version": "0.0.1",
-  "publisher": "Serchland",
+  "publisher": "Serchland-vbnetnavigation",
   "engines": {
     "vscode": "^1.75.0"
   },
