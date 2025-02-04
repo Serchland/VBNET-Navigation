@@ -12,5 +12,13 @@
 
 ## Extensiones Recomendadas (Opcionales)
 
-- [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp): Para mejorar la compatibilidad con proyectos complejos.
+- [C#](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp): 
+Por qué: Para mejorar la compatibilidad con proyectos complejos.
+- [C# DevKit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csharp-devkit):
+Por qué: Ideal para proyectos .NET en general, ya que mejora la compatibilidad con la carga de proyectos más complejos y puede ayudar a cargar adecuadamente los archivos .sln y .vbproj de proyectos VB.NET.
 - [VBScript](https://marketplace.visualstudio.com/items?itemName=Darfka.vbscript): Para resaltado de sintaxis básico.
+- [Code Spell Checker](https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker): 
+Por qué: Ayuda a detectar errores ortográficos en comentarios y nombres de variables, lo que es útil especialmente en proyectos grandes.
+
+
+
