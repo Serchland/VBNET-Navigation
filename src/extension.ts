@@ -1,9 +1,14 @@
 import * as vscode from 'vscode';
 import * as path from 'path';
-import * as fs from 'fs';
+
+// Índice de definiciones (almacena palabras clave y sus ubicaciones)
+const definitionIndex: { [word: string]: vscode.Location } = {};
 
 export function activate(context: vscode.ExtensionContext) {
     console.log('Extensión VB.NET Navigator activada.');
+
+    // Construir el índice de definiciones al cargar la extensión
+    buildDefinitionIndex();
 
     // Registrar el comando "vbnet-navigator.goToDefinition"
     let disposable = vscode.commands.registerCommand('vbnet-navigator.goToDefinition', async () => {
@@ -26,30 +31,33 @@ export function activate(context: vscode.ExtensionContext) {
         const word = document.getText(wordRange);
         console.log(`Buscando definición de: ${word}`);
 
-        // Buscar en todos los archivos .vb del workspace
-        const workspaceFolders = vscode.workspace.workspaceFolders;
-        if (!workspaceFolders) {
-            vscode.window.showErrorMessage('No se encontró un workspace abierto.');
+        // Buscar en el índice de definiciones
+        if (definitionIndex[word]) {
+            console.log(`Definición encontrada en el índice: ${definitionIndex[word].uri.fsPath}`);
+            await vscode.window.showTextDocument(definitionIndex[word].uri, {
+                selection: new vscode.Range(definitionIndex[word].range.start, definitionIndex[word].range.start)
+            });
             return;
         }
 
-        const files = await vscode.workspace.findFiles('**/*.vb', '**/bin/**');
-        for (const file of files) {
-            const textDoc = await vscode.workspace.openTextDocument(file);
-            const text = textDoc.getText();
+        // Si no está en el índice, buscar en archivos relevantes (misma carpeta)
+        const currentFileDir = path.dirname(document.uri.fsPath);
+        const filesInCurrentDir = await vscode.workspace.findFiles(`${currentFileDir}/**/*.vb`, '**/bin/**');
 
-            // Expresión regular para encontrar "Sub nombre", "Function nombre", "Class nombre", etc.
-            const regex = new RegExp(`\\b(Sub|Function|Class|Module|Dim|Property)\\s+${word}\\b`, 'i');
-            const match = text.match(regex);
+        for (const file of filesInCurrentDir) {
+            const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+                'vscode.executeDocumentSymbolProvider',
+                file
+            );
 
-            if (match) {
-                const index = match.index || 0;
-                const startPos = textDoc.positionAt(index);
-                const location = new vscode.Location(textDoc.uri, startPos);
-
-                // Navegar a la definición
-                await vscode.window.showTextDocument(textDoc.uri, { selection: new vscode.Range(startPos, startPos) });
-                return;
+            if (symbols) {
+                const foundSymbol = findSymbolInDocument(symbols, word);
+                if (foundSymbol) {
+                    definitionIndex[word] = new vscode.Location(file, foundSymbol.range.start);
+                    console.log(`Definición encontrada en: ${file.fsPath}`);
+                    await vscode.window.showTextDocument(file, { selection: foundSymbol.range });
+                    return;
+                }
             }
         }
 
@@ -57,6 +65,49 @@ export function activate(context: vscode.ExtensionContext) {
     });
 
     context.subscriptions.push(disposable);
+}
+
+// Función para buscar un símbolo en un documento
+function findSymbolInDocument(symbols: vscode.DocumentSymbol[], word: string): vscode.DocumentSymbol | undefined {
+    for (const symbol of symbols) {
+        if (symbol.name === word) {
+            return symbol;
+        }
+        if (symbol.children) {
+            const found = findSymbolInDocument(symbol.children, word);
+            if (found) {
+                return found;
+            }
+        }
+    }
+    return undefined;
+}
+
+// Función para construir el índice de definiciones
+async function buildDefinitionIndex() {
+    const files = await vscode.workspace.findFiles('**/*.vb', '**/bin/**');
+    for (const file of files) {
+        const symbols = await vscode.commands.executeCommand<vscode.DocumentSymbol[]>(
+            'vscode.executeDocumentSymbolProvider',
+            file
+        );
+
+        if (symbols) {
+            indexSymbols(symbols, file);
+        }
+    }
+}
+
+// Función para indexar símbolos
+function indexSymbols(symbols: vscode.DocumentSymbol[], file: vscode.Uri) {
+    for (const symbol of symbols) {
+        definitionIndex[symbol.name] = new vscode.Location(file, symbol.range.start);
+        console.log(`Definición agregada al índice: ${symbol.name} en ${file.fsPath}`);
+
+        if (symbol.children) {
+            indexSymbols(symbol.children, file);
+        }
+    }
 }
 
 export function deactivate() {

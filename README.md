@@ -22,5 +22,10 @@ Por qué: Ayuda a detectar errores ortográficos en comentarios y nombres de var
 - [VB NET Grammar and Snippet](https://marketplace.visualstudio.com/items?itemName=author.vbnet-grammar-snippet): 
 Por qué: Proporciona gramática y fragmentos de código para VB.NET, mejorando la productividad y la precisión al escribir código.
 
+## Características
+
+- Navegación a definiciones de métodos, clases, módulos, variables, interfaces, enums y namespaces.
+- Índice de definiciones para navegación rápida.
+- Soporte para proyectos grandes y complejos.
 
 
