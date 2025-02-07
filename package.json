@@ -2,7 +2,7 @@
   "name": "vbnet-navigator",
   "displayName": "VB.NET Navigator",
   "description": "Navegación básica para proyectos VB.NET en VS Code.",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "publisher": "Serchland-vbnetnavigation",
   "engines": {
     "vscode": "^1.75.0"
@@ -20,6 +20,10 @@
       {
         "command": "vbnet-navigator.goToDefinition",
         "title": "VB.NET: Ir a definición"
+      },
+      {
+        "command": "vbnet-navigator.validateSymbols",
+        "title": "VB.NET: Validar símbolos"
       }
     ],
     "keybindings": [
@@ -35,6 +39,11 @@
           "command": "vbnet-navigator.goToDefinition",
           "group": "navigation",
           "when": "editorTextFocus && editorLangId == vbnet"
+        },
+        {
+          "command": "vbnet-navigator.validateSymbols",
+          "group": "navigation",
+          "when": "editorTextFocus && editorLangId == vbnet"
         }
       ]
     }
@@ -45,7 +54,12 @@
     "watch": "tsc -watch -p ./"
   },
   "devDependencies": {
+    "@types/glob": "^8.1.0",
     "@types/vscode": "^1.75.0",
     "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "fast-glob": "^3.3.3",
+    "glob": "^11.0.1"
   }
 }
