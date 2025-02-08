@@ -7,14 +7,17 @@ const documentSymbolProvider: vscode.DocumentSymbolProvider = {
       const symbols: vscode.DocumentSymbol[] = [];
       let match;
 
-      console.log('Iniciando búsqueda de símbolos en el documento:', document.fileName);
+      // console.log('Iniciando búsqueda de símbolos en el documento:', document.fileName);
 
-      // Expresiones regulares para identificar funciones, subrutinas, clases, estructuras, enums y variables
-      const functionRegex = /(?:Public |Private |Protected )?Function\s+(\w+)/g;
-      const subroutineRegex = /(?:Public |Private |Protected )?Sub\s+(\w+)/g;
-      const classRegex = /(?:Public |Private |Protected )?Class\s+(\w+)/g;
-      const structureRegex = /(?:Public |Private |Protected )?Structure\s+(\w+)/g;
-      const enumRegex = /(?:Public |Private |Protected )?Enum\s+(\w+)/g;
+      // Expresiones regulares para identificar funciones, subrutinas, clases, estructuras, enums, interfaces, propiedades, eventos y variables
+      const functionRegex = /(?:Public |Private |Protected |Friend )?Function\s+(\w+)/g;
+      const subroutineRegex = /(?:Public |Private |Protected |Friend )?Sub\s+(\w+)/g;
+      const classRegex = /(?:Public |Private |Protected |Friend )?Class\s+(\w+)/g;
+      const structureRegex = /(?:Public |Private |Protected |Friend )?Structure\s+(\w+)/g;
+      const enumRegex = /(?:Public |Private |Protected |Friend )?Enum\s+(\w+)/g;
+      const interfaceRegex = /(?:Public |Private |Protected |Friend )?Interface\s+(\w+)/g;
+      const propertyRegex = /(?:Public |Private |Protected |Friend )?Property\s+(\w+)/g;
+      const eventRegex = /(?:Public |Private |Protected |Friend )?Event\s+(\w+)/g;
       const variableRegex = /\s*(Dim|Const)\s+(\w+)/g;
 
       const regexList = [
@@ -23,18 +26,21 @@ const documentSymbolProvider: vscode.DocumentSymbolProvider = {
         { regex: classRegex, kind: vscode.SymbolKind.Class, type: 'Class' },
         { regex: structureRegex, kind: vscode.SymbolKind.Struct, type: 'Structure' },
         { regex: enumRegex, kind: vscode.SymbolKind.Enum, type: 'Enum' },
+        { regex: interfaceRegex, kind: vscode.SymbolKind.Interface, type: 'Interface' },
+        { regex: propertyRegex, kind: vscode.SymbolKind.Property, type: 'Property' },
+        { regex: eventRegex, kind: vscode.SymbolKind.Event, type: 'Event' },
         { regex: variableRegex, kind: vscode.SymbolKind.Variable, type: 'Variable' }
       ];
 
       regexList.forEach(({ regex, kind, type }) => {
         if (token.isCancellationRequested) {
-          console.log('Búsqueda cancelada.');
+          // console.log('Búsqueda cancelada.');
           return resolve(symbols);
         }
 
         while ((match = regex.exec(document.getText()))) {
           const symbolName = match[1] || match[2];
-          console.log(`${type} encontrada: ${symbolName}`);
+          // console.log(`${type} encontrada: ${symbolName}`);
           const startPosition = document.positionAt(match.index);
           const endPosition = document.positionAt(match.index + match[0].length);
           symbols.push(new vscode.DocumentSymbol(
@@ -45,7 +51,7 @@ const documentSymbolProvider: vscode.DocumentSymbolProvider = {
         }
       });
 
-      console.log('Símbolos extraídos del archivo:', symbols);
+      // console.log('Símbolos extraídos del archivo:', symbols);
       resolve(symbols);
     });
   }
@@ -55,18 +61,18 @@ const documentSymbolProvider: vscode.DocumentSymbolProvider = {
 async function getAllVbFiles(): Promise<vscode.Uri[]> {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders) {
-    console.log('No hay workspace abierto.');
+    // console.log('No hay workspace abierto.');
     return [];
   }
 
   const vbFiles: vscode.Uri[] = [];
   for (const folder of workspaceFolders) {
-    console.log(`Buscando archivos .vb en: ${folder.uri.fsPath}`);
+    // console.log(`Buscando archivos .vb en: ${folder.uri.fsPath}`);
     const files = await vscode.workspace.findFiles(new vscode.RelativePattern(folder, '**/*.vb'));
     vbFiles.push(...files);
   }
 
-  console.log(`Archivos .vb encontrados en el workspace: ${vbFiles.length}`);
+  // console.log(`Archivos .vb encontrados en el workspace: ${vbFiles.length}`);
   return vbFiles;
 }
 
@@ -85,15 +91,15 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       for (const file of vbFiles) {
-        console.log(`Analizando archivo: ${file.fsPath}`);
+        // console.log(`Analizando archivo: ${file.fsPath}`);
         const document = await vscode.workspace.openTextDocument(file);
         const symbols = await documentSymbolProvider.provideDocumentSymbols(document, new vscode.CancellationTokenSource().token);
-        console.log(`Símbolos encontrados en ${file.fsPath}:`, symbols);
+        // console.log(`Símbolos encontrados en ${file.fsPath}:`, symbols);
       }
 
       vscode.window.showInformationMessage('Validación de símbolos completada.');
     } catch (error) {
-      console.error('Error al validar los símbolos: ', error);
+      // console.error('Error al validar los símbolos: ', error);
       vscode.window.showErrorMessage('Error al validar los símbolos.');
     }
   });
@@ -115,7 +121,7 @@ export function activate(context: vscode.ExtensionContext) {
     }
 
     const word = document.getText(wordRange).replace(/\(\)$/, '').trim();
-    console.log(`Buscando definición de: ${word}`);
+    // console.log(`Buscando definición de: ${word}`);
 
     try {
       const vbFiles = await getAllVbFiles();
@@ -128,23 +134,23 @@ export function activate(context: vscode.ExtensionContext) {
       let foundFile: vscode.Uri | undefined;
 
       for (const file of vbFiles) {
-        console.log(`Buscando en archivo: ${file.fsPath}`);
+        // console.log(`Buscando en archivo: ${file.fsPath}`);
         const document = await vscode.workspace.openTextDocument(file);
         const symbols = await documentSymbolProvider.provideDocumentSymbols(document, new vscode.CancellationTokenSource().token) as vscode.DocumentSymbol[] | undefined;
         if (!symbols) {
-          console.log('No se encontraron símbolos en el archivo:', file.fsPath);
+          // console.log('No se encontraron símbolos en el archivo:', file.fsPath);
           continue;
         }
 
         // Verificar que symbols sea un array de DocumentSymbol
         if (!Array.isArray(symbols)) {
-          console.log('No se encontraron símbolos en el archivo:', file.fsPath);
+          // console.log('No se encontraron símbolos en el archivo:', file.fsPath);
           continue;
         }
 
         // Buscar el símbolo que coincida con la palabra
         const match = symbols.find((symbol: vscode.DocumentSymbol) => {
-          console.log(`Comparando "${symbol.name}" con "${word}"`);
+          // console.log(`Comparando "${symbol.name}" con "${word}"`);
           return symbol.name.toLowerCase() === word.toLowerCase();
         });
 
@@ -156,17 +162,17 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       if (foundSymbol && foundFile) {
-        console.log(`Definición encontrada en: ${foundFile.fsPath}, línea ${foundSymbol.range.start.line + 1}`);
+        // console.log(`Definición encontrada en: ${foundFile.fsPath}, línea ${foundSymbol.range.start.line + 1}`);
         const openedDocument = await vscode.workspace.openTextDocument(foundFile);
         const openedEditor = await vscode.window.showTextDocument(openedDocument);
         await openedEditor.revealRange(foundSymbol.range, vscode.TextEditorRevealType.InCenter);
         openedEditor.selection = new vscode.Selection(foundSymbol.range.start, foundSymbol.range.end);
       } else {
-        console.log('No se encontró la definición para:', word);
+        // console.log('No se encontró la definición para:', word);
         vscode.window.showInformationMessage(`No se encontró la definición de "${word}".`);
       }
     } catch (error) {
-      console.error('Error en la búsqueda de definiciones: ', error);
+      // console.error('Error en la búsqueda de definiciones: ', error);
       vscode.window.showErrorMessage('Error al buscar la definición.');
     }
   });
