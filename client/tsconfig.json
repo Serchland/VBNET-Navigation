@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "../out/client",
+    "module": "CommonJS",
+    "target": "es2018",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../out/client.tsbuildinfo"
+  },
+  "include": ["src"]
+}

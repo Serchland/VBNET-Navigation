@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "rootDir": "./",
+    "outDir": "../out/server",
+    "module": "CommonJS",
+    "target": "es2018",
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "incremental": true,
+    "tsBuildInfoFile": "../out/server.tsbuildinfo"
+  },
+  "include": ["server.ts"]
+}
